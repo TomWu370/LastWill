@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a contract</title>
+    <script src="https://cdn.jsdelivr.net/npm/ipfs/dist/index.min.js"></script>
+    <script src="../src/utils.js"></script>
+    <script type="text/javascript" src="../node_modules/web3/dist/web3.min.js"></script>
+    <script type="text/javascript" src="../src/lastwilldata.js"></script>
+
+</head>
+<nav>
+  <ul>
+    <li><a href="http://localhost:8000">Login</a></li>
+    <li><a href="Menu.html">Main Menu</a></li>
+    <li><strong>Create Contract</strong></li>
+    <li><a href="viewContract.html">View Contract</a></li>
+
+  </ul>
+</nav>
+<body>
+  <label for="text" id="labelling">hi</label>
+
+  <form method="get">
+  <label for="contractname">Contract Name:</label><br>
+  <input type="text" id="contractname" name="contractname" required><br>
+
+  <label for="sname">Surname:</label><br>
+  <input type="text" id="sname" name="sname" required><br>
+
+  <label for="fname">First Name:</label><br>
+  <input type="text" id="fname" name="fname" required><br>
+
+  <label for="email">Email:</label><br>
+  <input type="email" id="email" name="email" required><br>
+  <!-- the above 4 are required should add require tag to it -->
+
+  <div>
+    <div id="recipent">
+      <h2>Recipent 1</h2>
+      <label for="text" id="bval1">hi</label>
+      <input type="range" name="s1" min="0" max="100" id="bar1" value="0" oninput="adjustRanges();" required><br>
+      <input type="file" id="file1" name="filename"><br>
+      <label for="remail">Email:</label><br>
+      <input type="email" id="remail1" name="remail" required><br>
+      <label for="text">Wallet Address:</label><br>
+      <input type="text" id="raddress1" name="address" required><br>
+    </div>
+  </div>
+  <input type="submit" value="Add recipent" onClick="duplicate()">
+  <!-- <div>
+    Recipent 2
+    <label for="text" id="recipent2">hi</label>
+    <input type="range" name="s2" min="0" max="100" id="bar2" value="0" oninput="adjustRanges();">
+    <!-- style="margin-left: 1.9em;" -->
+  </div>
+  <!-- <div>
+    Recipent 3
+    <label for="text" id="recipent3">hi</label>
+    <input type="range" name="s3" min="0" max="100" id="bar3" value="0" oninput="adjustRanges();">
+    <!-- style="margin-left: 2.7em;" -->
+  </div>
+
+  <div>
+    <label for="start">Expiration date:</label>
+
+    <input type="date" id="exdate" name="expirty date" value="1970-01-01" min="1970-01-01" max="9999-12-31" required><br>
+    <script>
+      Date.prototype.toDateInputValue = (function() {
+      var local = new Date(this);
+      local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+      return local.toJSON().slice(0,10);});
+      document.getElementById('exdate').value = new Date().toDateInputValue();
+      document.getElementById('exdate').min = new Date().toDateInputValue();
+    </script>
+
+    <label for="multiplier">Frequency</label>
+    <input type="number" id="multiplier" name="multiplier" min="1" max="3652135" required>
+    <select id="frequency" name="checkin frequency">
+      <option value=86400>day</option>
+      <option value=604800>week</option>
+      <option value=2629743>month</option>
+      <option value=31556926>year</option>
+    </select>
+
+  </div>
+
+
+
+  <input type="button" value="Click" onClick="processForm(this.form)">
+  </form>
+
+  <a href="" id="download">Download</a>
+
+<script type="text/javascript">
+
+  var i = 1;
+  var object = document.getElementById('recipent');
+
+  function duplicate() {
+      var clone = object.cloneNode(true); // "deep" clone
+      clone.id = "recipent" + ++i; // change the id and increment i value
+      clone.children[0].innerHTML = "Recipent " + i; // change the title
+      clone.querySelector("[id^=bval]").id = "bval" + i; // change the id for the slider display
+      clone.querySelector("[id^=bval]").innerHTML = 0; // change the value for the slider display
+      clone.querySelector("[id^=bar]").id = "bar" + i; // change the id for the slider
+      clone.querySelector("[id^=bar]").value = 0;  // change the value for the slider
+      clone.querySelector("[id^=file]").id = "file" + i; // change the id for file upload //<br> counts as a separate children
+      clone.querySelector("[id^=file]").value = null; // change the file upload to null
+      clone.querySelector("[id^=remail]").id = "remail" + i; // change the email id
+      clone.querySelector("[id^=remail]").value = null; // change email input to null
+      clone.querySelector("[id^=raddress]").id = "raddress" + i; // change the email id
+      clone.querySelector("[id^=raddress]").value = null; // change email input to null
+      object.parentNode.appendChild(clone);
+      document.getElementById("bar"+i).addEventListener("change", adjustRanges(i-1));
+  }
+
+</script>
+
+<script type="text/javascript">
+  // for processing form
+
+  async function processForm (form) {
+    // var attribute = form.contractname.value + form.sname.value;;
+    // var multiplier = form.multiplier.value;
+    // var frequency = form.frequency.value;
+
+    // alert("herecreatecontract");
+    // console.log(file.name);
+    // console.log(attribute);
+    // console.log(multiplier*frequency);
+    // document.getElementById("labelling").innerHTML = attribute;
+    let st = await getRecipentArray(form);
+    let stuff = await getCombinedArray(st);
+    let json = {
+      "contractName": form.contractname.value,
+      "surname": form.sname.value,
+      "firstname": form.fname.value,
+      "email": form.email.value,
+      "expirationDate": form.exdate.value,
+      "frequency": form.frequency.value * form.multiplier.value,
+      "recipents": await getCombinedArray(await getRecipentArray(form))
+
+    }
+    // alert(getCombinedArray(getRecipentArray(form))[0])
+    // fetch("http://localhost:8000", {
+    //     method:"POST",
+    //     body: JSON.stringify({
+    //         email: document.getElementById("email").value,
+    //         recipents: await getCombinedArray(getRecipentArray(form))
+    //         })
+    //     }).then(result => result.json())
+    //         // do something with the result
+    //         // await console.log("Completed with result:", result.json());
+    //       .then(data => {
+    //         if (data.response == "Logging In"){
+    //           console.log("hj");
+    //           window.location.href = "http://localhost:8000/pages/menu.html";}
+    //       })
+    //       // .then(window.location.assign("http://localhost:8000/pages/Menu.html";)
+    //       //       // set global variable
+    //       // )
+    //       .catch(err => {
+    //         // if any error occured, then catch it here
+    //         alert(err);
+    //     });
+    // alert(json);
+    var contractAddress = await createContract(form);
+    console.log(contractAddress)
+    sendJSON(json, contractAddress, form, "createContract");
+    var recipents = await document.querySelectorAll("[id^=recipent]");
+    // createContractDB(form, contractAddress, recipents);
+    var uploadedFiles  = [] // array
+    for (let o = 0; o < recipents.length; o++) {
+
+      if (await recipents[o].querySelector("[id^=file]").files) {
+        // [3] is the file upload field
+        // [5] is the email input field
+        let file = await recipents[o].querySelector("[id^=file]").files[0]
+        console.log(file)
+        let remail = await recipents[o].querySelector("[id^=remail]").value
+        var uploadedFile = await processFile(file, remail);
+        // storeFileDB(uploadedFile, address, recipents[o].querySelector("[id^=remail]").value);
+        await uploadedFiles.push(uploadedFile)
+      }
+      else {
+        console.log("no file")
+        uploadedFiles.push(null)
+      }
+    }
+    console.log(uploadedFile)
+    fetch(window.location.href, {
+        method:"POST",
+        body: JSON.stringify({
+            contractAddress: contractAddress,
+            uploadedFiles: uploadedFiles,
+            operationType: "updateFiles"
+            })
+        }).then(result => result.json())
+            // do something with the result
+            // await console.log("Completed with result:", result.json());
+          .then(data => {
+            if (data.response != false){
+              // alert("Added files to database");
+              window.location.href = "http://localhost:8000/pages/menu.html";}
+            else {
+              alert("error have occured")
+            }
+          })
+          // .then(window.location.assign("http://localhost:8000/pages/Menu.html";)
+          //       // set global variable
+          // )
+          .catch(err => {
+            // if any error occured, then catch it here
+            console.error(err);
+        });
+
+
+
+  }
+    // main(file)
+    // window.location.href = "http://localhost:8000/pages/Menu.html";
+
+</script>
+
+<script type="text/javascript">
+  // for processing the range Bars
+  var ranges = document.querySelectorAll("[id^=bar]");
+  var bar = document.querySelectorAll("[id^=bval]");
+  var maxRange = 100;
+
+  for(var j = 0; j < ranges.length; j++) {
+        ranges[j].addEventListener("change", adjustRanges(j));
+
+  }
+
+  function adjustRanges(j) {
+    return function() {
+      var ranges = document.querySelectorAll("[id^=bar]");
+      var bar = document.querySelectorAll("[id^=bval]");
+      var sumOfRanges = total(ranges);
+      if (sumOfRanges > maxRange) {
+        ranges[j].value = maxRange - (sumOfRanges-ranges[j].value);
+
+      }
+      else if (sumOfRanges == maxRange) {
+        ranges[j].value = sumOfRanges - ranges[j].value;
+      }
+      else if (ranges[j].value >= maxRange) {
+        ranges[j].value = maxRange;
+      }
+
+      if (true)
+      {
+        bar[j].innerHTML =  ranges[j].value;
+      }
+    }
+  }
+
+ function total(range) {
+   var temp = 0;
+   for(var k = 0; k < range.length; k++){
+     temp += parseFloat(range[k].value);
+   }
+   console.log("total: "+temp);
+   return temp;
+ }
+</script>
+
+</body>
+</html>

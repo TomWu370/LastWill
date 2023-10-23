@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+</head>
+<nav>
+  <ul>
+    <li><a href="http://localhost:8000">Login</a></li>
+    <li><strong>Register</strong></li>
+
+  </ul>
+</nav>
+<body>
+
+  <h2></h2>
+  <form id="form">
+    <label for="text">Email</label>
+    <input id="email" type="text"><br>
+    <label for="text" >Username</label>
+    <input id="username" type="text"><br>
+    <label for="text" >Password</label>
+    <input id="password" type="password"><br>
+    <input id="registerButton" type="submit" value="submit" onClick="register(this.form)">
+  </form>
+  <!-- <button id="registerButton" type="button">register account</button> -->
+  <script type="text/javascript">
+
+    async function register() {
+      fetch(window.location.href, {
+          method:"POST",
+          body: JSON.stringify({
+              email: document.getElementById("email").value,
+              password: document.getElementById("password").value,
+              username: document.getElementById("username").value,
+              operationType: "createAccount"
+              })
+          }).then(result => result.json())
+              // do something with the result
+              // await console.log("Completed with result:", result.json());
+            .then(data => {
+              alert(data.response)
+            })
+
+            .catch(err => {
+              // if any error occured, then catch it here
+              console.error(err);
+          });
+
+    }
+
+  </script>
+
+
+
+</body>
+</html>

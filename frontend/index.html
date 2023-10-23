@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Last Will</title>
+</head>
+<nav>
+  <ul>
+    <li><strong>Login</strong></li>
+    <li><a href="pages/register.html">Register</a></li>
+
+
+  </ul>
+</nav>
+<body onload="if (window.location.href != 'http://localhost:8000/index.html?'){window.location.href = 'http://localhost:8000/index.html?';}">
+    <h1>Login</h1>
+    <br/>
+
+    <h2></h2>
+    <form id="form">
+      <label for="text">Email</label>
+      <input id="email" type="text"><br>
+      <label for="text" >password</label>
+      <input id="password" type="password"><br>
+      <input id="loginButton" type="submit" value="submit" onClick="login(this.form)">
+    </form>
+    <button id="registerButton" type="button" onclick="location.href = 'http://localhost:8000/pages/register.html';">register account</button>
+    <!-- <script type="text/javascript" src="node_modules/web3/dist/web3.min.js"></script> -->
+    <script type="text/javascript">
+
+      // contractButton.addEventListener("click", deployContract)
+
+      async function login() {
+        fetch(window.location.href, {
+          method:"POST",
+          body: JSON.stringify({
+            email: document.getElementById("email").value,
+            password: document.getElementById("password").value,
+            operationType: "checkLogin"
+            })
+            }).then(result => result.json())
+                // do something with the result
+                // await console.log("Completed with result:", result.json());
+              .then(data => {
+                if (data.response != false){
+                  alert(data.response + " Have logged in");
+                  localStorage.setItem("email", document.getElementById("email").value);
+                  localStorage.setItem("password", document.getElementById("password").value);
+                  window.location.href = "http://localhost:8000/pages/menu.html";}
+                else {
+                  alert("check your credentials and/or activate your account");
+                }
+              })
+              // .then(window.location.assign("http://localhost:8000/pages/Menu.html";)
+              //       // set global variable
+              // )
+              .catch(err => {
+                // if any error occured, then catch it here
+                console.error(err);
+            });
+
+      }
+
+    </script>
+
+
+</body>
+</html>

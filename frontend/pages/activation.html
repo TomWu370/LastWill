@@ -1,0 +1,53 @@
+<<script type="text/javascript">
+  let url = new URL(window.location.href)
+  let params = new URLSearchParams(url.search)
+  let email = params.get("email")
+  console.log(email)
+  fetch(window.location.href, {
+      method:"POST",
+      body: JSON.stringify({
+          email: email,
+          operationType: "accountActivation"
+          })
+      }).then(result => result.json())
+          // do something with the result
+          // await console.log("Completed with result:", result.json());
+        .then(data => {
+          alert(data.response)
+          window.location.href = "http://localhost:8000/index.html";
+        })
+
+        .catch(err => {
+          // if any error occured, then catch it here
+          console.error(err);
+      });
+var collection = [];
+collection[0] = document.getElementsByName("product_option[0][product_option_value][0][price]");
+collection[1] = document.getElementsByName("product_option[0][product_option_value][1][price]");
+collection[2] = document.getElementsByName("product_option[0][product_option_value][2][price]");
+collection[3] = document.getElementsByName("product_option[0][product_option_value][3][price]");
+collection[4] = document.getElementsByName("product_option[0][product_option_value][4][price]");
+collection[5] = document.getElementsByName("product_option[0][product_option_value][5][price]");
+var values = [];
+values[0] = "0.6000";
+values[1] = "0.9000";
+values[2] = "0.9000";
+values[3] = "1.5000";
+values[4] = "2.1000";
+values[5] = "2.1000";
+for (let j = 0; j < 6; j++) {
+  change(collection[j], values[j]);
+}
+
+
+async function change(object, value){
+  for (let i = 0; i < object.length; i++) {
+
+    console.log("changing to");
+    console.log(object[i].value);
+    console.log(value);
+    object[i].value = value;
+}
+}
+
+</script>

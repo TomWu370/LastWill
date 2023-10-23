@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greeting Dapp</title>
+</head>
+<nav>
+  <ul>
+    <li><a href="http://localhost:8000">Home</a></li>
+    <li><a href="Menu.html">Main Menu</a></li>
+    <li><a href="createContract.html">Create Contract</a></li>
+    <li><a href="viewContract.html">View Contract</a></li>
+    <li><strong>Test2</strong></li>
+
+  </ul>
+</nav>
+<body>
+  <script type="text/javascript" src="../node_modules/mongodb.d.ts"></script>
+  <script>
+    console.log("here")
+
+
+    const MongoClient = mongodb.MongoClient;
+    const ServerApiVersion = mongodb.ServerApiVersion;
+    const uri = "mongodb+srv://LastWill:Eremis370@lastwill.lpnyf.mongodb.net/lastwill?retryWrites=true&w=majority";
+    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+    console.log("here")
+
+    createAccountDB("email", "password", "username")
+
+  </script>
+
+
+</body>
+</html>

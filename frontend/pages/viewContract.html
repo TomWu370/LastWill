@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../src/utils.js"></script>
+    <script type="text/javascript" src="../node_modules/web3/dist/web3.min.js"></script>
+    <script type="text/javascript" src="../src/lastwilldata.js"></script>
+    <title>Select a Contract</title>
+</head>
+<nav>
+  <ul>
+    <li><a href="http://localhost:8000">Login</a></li>
+    <li><a href="Menu.html">Main Menu</a></li>
+    <li><a href="createContract.html">Create Contract</a></li>
+    <li><strong>View Contract</strong></li>
+
+  </ul>
+  <input id="loginButton" type="button" value="Fetch contracts" onClick="view()">
+</nav>
+<body>
+  <h3 id="text"> hi </h3>
+  <div id="canvas"></div>
+  <script type="text/javascript">
+  async function view() {
+    fetch(window.location.href, {
+        method:"POST",
+        body: JSON.stringify({
+            email: localStorage.getItem("email"),
+            operationType: "getAllContracts"
+            })
+        }).then(result => result.json())
+            // do something with the result
+            // await console.log("Completed with result:", result.json());
+          .then(data => {
+            let array = data.response
+            for(let i = 0; i < array.length; i++){
+              let btn = document.createElement("div");
+              btn.innerHTML = "<button onclick='detail(this.value)' value=" + array[i][1]
+              + ">" +
+              array[i][0] + "<br>" +
+              array[i][1] + "<br>" +
+              array[i][2]
+              + "</button>";
+              console.log(array[i][1]);
+              // btn.value = array[i][1] // conhtractAddress
+              document.getElementById("canvas").appendChild(btn);
+              let br = document.createElement("br")
+              document.getElementById("canvas").appendChild(br)
+            }
+            console.log(data.response)
+          })
+          .catch(err => {
+            // if any error occured, then catch it here
+            console.error(err);
+        });}
+
+  async function detail(address) {
+    fetch(window.location.href, {
+        method:"POST",
+        body: JSON.stringify({
+            contractAddress: address,
+            email: "tomwu370@gmail.com",
+            operationType: "getContractDetails"
+            })
+        }).then(result => result.json())
+            // do something with the result
+            // await console.log("Completed with result:", result.json());
+          .then(data => {
+            console.log(data.response)
+            let array = data.response
+            document.getElementById("canvas").innerHTML = "hi<br>" + localStorage.getItem('email') + "<br>" +
+            "Contract Name: " + array[0][0] + "<br>" +
+            "Contract Address: " + array[0][1] + "<br>" +
+            "Expiration Date: " + array[0][2] + "<br>" +
+            "Check in Frequency in Seconds: " + array[0][3] + "<br>" +
+            "Funds: " + array[0][4] + "<br>"
+            let checkin = document.createElement("div");
+            let send = document.createElement("div");
+            let cancel = document.createElement("div");
+            checkin.innerHTML = "<button onclick='checkin(this.value)' value=" + address
+              + ">" +
+              "Check In"
+              + "</button>";
+            send.innerHTML = "<button onclick='send(this.value)' value=" + address
+              + ">" +
+              "Send Funds"
+              + "</button>";
+            cancel.innerHTML = "<button onclick='cancel(this.value)' value=" + address
+              + ">" +
+              "Cancel this Contract"
+              + "</button>";
+            document.getElementById("canvas").appendChild(checkin)
+            document.getElementById("canvas").appendChild(send)
+            document.getElementById("canvas").appendChild(cancel)
+            // replace body html then add buttons
+          })
+          .catch(err => {
+            // if any error occured, then catch it here
+            console.error(err);
+        });}
+
+
+async function checkin(address) {
+  // confirmLive(address)
+  fetch(window.location.href, {
+      method:"POST",
+      body: JSON.stringify({
+          contractAddress: address,
+          operationType: "confirmLive"
+          })
+      }).then(result => result.json())
+          // do something with the result
+          // await console.log("Completed with result:", result.json());
+        .then(data => {
+
+          alert(data.response)
+        })
+        .catch(err => {
+          // if any error occured, then catch it here
+          console.error(err);
+      });
+
+}
+async function cancel(address) {
+  fetch(window.location.href, {
+      method:"POST",
+      body: JSON.stringify({
+          contractAddress: address,
+          operationType: "cancelContract"
+          })
+      }).then(result => result.json())
+          // do something with the result
+          // await console.log("Completed with result:", result.json());
+        .then(data => {
+
+          alert(data.response)
+        })
+        .catch(err => {
+          // if any error occured, then catch it here
+          console.error(err);
+      });
+
+}
+async function send(address) {
+  alert("Send funds to this address: " + address);
+}
+
+
+  </script>
+
+
+</body>
+</html>
